@@ -23,7 +23,7 @@ const albums = [
   {
     id: 4,
     title: "Tomorrow X Together",
-    image: "https://upload.wikimedia.org/wikipedia/en/e/e0/Minisode1_-_Blue_Hour.jpg",
+    image: "https://blog.quizur.com/wp-content/uploads/2024/11/txt-with-spray-paint-mgwwwlfbbad8085b.webp",
     type: "artist"
   },
 ];
@@ -98,7 +98,7 @@ const SearchBar = () => {
                 <img
                   src={album.image}
                   alt={album.title}
-                  className="w-10 h-10 rounded-md"
+                  className={`w-10 h-10 object-cover ${album.type === 'artist' ? 'rounded-full' : 'rounded-md'}`}
                 />
               </li>
             ))}
