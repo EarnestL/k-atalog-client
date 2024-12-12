@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
+import { Link, useNavigate } from "react-router-dom";
 import { ReactComponent as ArrowIcon } from '../assets/arrowIcon.svg';
-import { ReactComponent as SearchIcon } from '../assets/searchIcon.svg'
+import SearchBar from '../components/SearchBar';
 
 const Navbar = () => {
 
@@ -9,6 +10,7 @@ const Navbar = () => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect (() => {
       if (user_id) {
@@ -30,24 +32,13 @@ const Navbar = () => {
     <nav className="sticky top-0 bg-[#383838] shadow-lg z-10">
       <div className="flex flex-wrap items-center justify-between">
         {/* Logo */}
-        <div className="text-2xl font-bold text-white flex-shrink-0 ml-10">
-          K-atalog
+        <div className="text-2xl font-bold text-white flex-shrink-0 ml-10 hover:text-[#EBEBEB]">
+          <Link to="/">K-atalog</Link>
         </div>
 
         {/* Search Bar */}
         <div className="flex-grow flex justify-center order-last w-full md:order-none md:w-auto md:py-4 pb-4 mx-4">
-          <div className="flex items-center bg-white rounded-full py-2 px-4 w-full md:w-[60%]">
-            <input
-              type="text"
-              placeholder="Search artists, albums and more..."
-              className="flex-grow bg-transparent focus:outline-none text-gray-700"
-            />
-            <button className="text-gray-500 hover:text-gray-700">
-            <SearchIcon
-              className={`w-5 h-5 transition-transform duration-300 stroke-[#383838] hover:stroke-gray-400`}
-            />
-            </button>
-          </div>
+          <SearchBar/>
         </div>
 
         <div
