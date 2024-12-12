@@ -1,9 +1,11 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const AlbumCard = ({ image, title, artist, date, products }) => {
-
+  const navigate = useNavigate();
+  
   const handleClick = () => {
-    console.log("Album clicked:", title);
+    navigate("/album");
   };
 
   return (

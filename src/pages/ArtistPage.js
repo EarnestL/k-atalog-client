@@ -143,8 +143,6 @@ const albums = [
         <div className="relative bg-[#EBEBEB] md:-mt-8">
             <AlbumCollage albums={albums} />
         </div>
-
-  
       </div>
     );
   };
