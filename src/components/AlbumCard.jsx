@@ -2,8 +2,12 @@ import React from "react";
 
 const AlbumCard = ({ image, title, artist, date, products }) => {
 
+  const handleClick = () => {
+    console.log("Album clicked:", title);
+  };
+
   return (
-    <div className="bg-white shadow-lg md:w-[250px] w-[150px] flex-shrink-0 my-4 group rounded-md">
+    <div className="bg-white shadow-lg md:w-[250px] w-[150px] flex-shrink-0 my-4 group rounded-md" onClick={handleClick}>
       {/* Album Image */}
       <img src={image} alt={title} className="w-full md:h-[250px] h-[150px] object-cover scale-95 transform transition-transform duration-300 group-hover:scale-100" />
       

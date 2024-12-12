@@ -29,7 +29,7 @@ const Navbar = () => {
   }, [isDropDownOpen]);
   
   return (
-    <nav className="sticky top-0 bg-[#383838] shadow-lg z-10">
+    <nav className="sticky top-0 bg-[#383838] shadow-lg z-30">
       <div className="flex flex-wrap items-center justify-between">
         {/* Logo */}
         <div className="text-2xl font-bold text-white flex-shrink-0 ml-10 hover:text-[#EBEBEB]">
@@ -68,7 +68,7 @@ const Navbar = () => {
 
           {/* Dropdown Menu */}
           {isLoggedIn && isDropDownOpen && (
-           <div className="absolute top-full bg-[#383838] shadow-lg w-40 text-[#EBEBEB] z-50 right-3">
+           <div className="absolute top-full bg-[#383838] shadow-lg w-40 text-[#EBEBEB] z-30 right-3">
              <ul>
                <li className="px-4 py-3 hover:bg-gray-900 cursor-pointer text-[#EBEBEB] hover:text-white">
                   Settings

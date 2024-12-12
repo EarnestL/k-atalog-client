@@ -4,6 +4,8 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import LandingPage from './pages/LandingPage';
 import SearchPage from './pages/SearchPage';
+import AlbumPage from './pages/AlbumPage';
+import ArtistPage from './pages/ArtistPage';
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/search" element={<SearchPage />} />
+            <Route path="/album" element={<AlbumPage />} />
+            <Route path="/artist" element={<ArtistPage />} />
           </Routes>
         </main>
         <Footer />
