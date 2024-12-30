@@ -28,33 +28,6 @@ const AlbumPage = () => {
     }
   };
 
-  const handleMouseDown = (e) => {
-    e.preventDefault(); // Prevents default drag behavior
-    setIsDragging(true)
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false)
-    setStyles({ transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg)' });
-  };
-
-  const handleMouseMove = (e) => {
-    if (!isDragging) return;
-
-    const image = imageRef.current;
-    if (!image) return;
-
-    const { left, top, width, height } = image.getBoundingClientRect();
-    const x = e.clientX - (left + width / 2);
-    const y = e.clientY - (top + height / 2);
-
-    const rotateX = -y / height * 15; // Adjust multiplier for sensitivity
-    const rotateY = x / width * 15; // Adjust multiplier for sensitivity
-    setStyles({
-      transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
-    });
-  };
-
   const handleTouchStart = (e) => {
     setTouchStart(e.touches[0]);
     setIsDragging(true);
@@ -319,38 +292,13 @@ const AlbumPage = () => {
 </div>
       {/* Fullscreen Modal */}
       {viewedImage && (
-        
         <div
           className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
-          onMouseMove={handleMouseMove}
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
+          onClick={handleClick} // Close modal on background click
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
           onTouchMove={handleTouchMove}
         >
-              {/* Close Icon */}
-    <button
-      className="absolute top-16 right-4 text-white bg-gray-800 rounded-full p-2 hover:bg-gray-700 transition"
-      onClick={() => setViewedImage(null)} // Close modal on click
-    >
-      {/* Heroicon for the Close Button */}
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth="2"
-        stroke="currentColor"
-        className="w-6 h-6"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M6 18L18 6M6 6l12 12"
-        />
-      </svg>
-    </button>
-
           <img
             ref={imageRef}
             src={viewedImage}
