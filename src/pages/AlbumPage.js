@@ -16,6 +16,23 @@ const AlbumPage = () => {
   const { artist_n_name, release_id } = useParams();
 
   const baseUri = process.env.REACT_APP_API_BASE_URI;
+
+  // Handle disabling background scrolling
+  useEffect(() => {
+    if (viewedImage) {
+      // Disable scrolling
+      document.body.style.overflow = "hidden";
+    } else {
+      // Re-enable scrolling
+      document.body.style.overflow = "";
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [viewedImage]);
+  
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
