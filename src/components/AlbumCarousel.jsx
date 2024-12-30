@@ -11,7 +11,7 @@ const AlbumCarousel = ({ albums, title}) => {
   // Calculate the number of scrollable sections
   useEffect(() => {
     if (scrollRef.current) {
-      const containerWidth = 1320;
+      const containerWidth = scrollRef.current.offsetWidth - 100;
       const totalScrollWidth = scrollRef.current.scrollWidth;
       const scrollableSections = Math.ceil(totalScrollWidth / containerWidth);
       setBubblesCount(scrollableSections);
@@ -20,7 +20,7 @@ const AlbumCarousel = ({ albums, title}) => {
 
     // Scroll the container left
     const scrollLeft = () => {
-        const containerWidth = 1320;
+        const containerWidth = scrollRef.current.offsetWidth - 100;
       scrollRef.current.scrollBy({
         left: -containerWidth, // Adjust scroll distance
         behavior: "smooth",
@@ -30,7 +30,7 @@ const AlbumCarousel = ({ albums, title}) => {
   
     // Scroll the container right
     const scrollRight = () => {
-        const containerWidth = 1320;
+        const containerWidth = scrollRef.current.offsetWidth - 100;
       scrollRef.current.scrollBy({
         left: containerWidth, // Adjust scroll distance
         behavior: "smooth",
@@ -53,11 +53,13 @@ const AlbumCarousel = ({ albums, title}) => {
         {albums.map((album, index) => (
           <AlbumCard
             key={index}
-            image={album.image}
-            title={album.title}
-            artist={album.artist}
-            date={album.date}
-            products={album.products}
+            album_image={album.album_image}
+            release_id={album.release_id}
+            release_title={album.release_title}
+            artist_name={album.artist_name}
+            artist_n_name={album.artist_n_name}
+            release_date={album.release_date}
+            product_count={album.product_count}
           />
         ))}
       </div>

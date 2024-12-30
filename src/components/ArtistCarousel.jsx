@@ -11,7 +11,7 @@ const ArtistCarousel = ({artists}) => {
   // Calculate the number of scrollable sections
   useEffect(() => {
     if (scrollRef.current) {
-      const containerWidth = scrollRef.current.offsetWidth;;
+      const containerWidth = scrollRef.current.offsetWidth;
       const totalScrollWidth = scrollRef.current.scrollWidth;
       const scrollableSections = Math.ceil(totalScrollWidth / containerWidth);
       setBubblesCount(scrollableSections);
@@ -20,7 +20,7 @@ const ArtistCarousel = ({artists}) => {
 
     // Scroll the container left
     const scrollLeft = () => {
-        const containerWidth = scrollRef.current.offsetWidth;;
+        const containerWidth = scrollRef.current.offsetWidth;
       scrollRef.current.scrollBy({
         left: -containerWidth, // Adjust scroll distance
         behavior: "smooth",
@@ -30,7 +30,7 @@ const ArtistCarousel = ({artists}) => {
   
     // Scroll the container right
     const scrollRight = () => {
-        const containerWidth = scrollRef.current.offsetWidth;;
+        const containerWidth = scrollRef.current.offsetWidth;
       scrollRef.current.scrollBy({
         left: containerWidth, // Adjust scroll distance
         behavior: "smooth",

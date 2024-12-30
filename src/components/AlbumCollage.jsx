@@ -9,11 +9,13 @@ const AlbumCollage = ({ albums }) => {
             {albums.map((album, index) => (
                 <AlbumCard
                     key={index}
-                    image={album.image}
-                    title={album.title}
-                    artist={album.artist}
-                    date={album.date}
-                    products={album.products}
+                    album_image={album.album_image}
+                    release_id={album.release_id}
+                    release_title={album.release_title}
+                    artist_name={album.artist_name}
+                    artist_n_name={album.artist_n_name}
+                    release_date={album.release_date}
+                    product_count={album.product_count}
                 />
             ))}
         </div>

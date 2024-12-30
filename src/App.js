@@ -16,8 +16,8 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/search" element={<SearchPage />} />
-            <Route path="/album" element={<AlbumPage />} />
-            <Route path="/artist" element={<ArtistPage />} />
+            <Route path="/:group_n_name/:release_id" element={<AlbumPage />} />
+            <Route path="/:group_n_name" element={<ArtistPage />} />
           </Routes>
         </main>
         <Footer />

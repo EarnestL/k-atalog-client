@@ -1,62 +1,49 @@
 import React, { useState, useRef, useEffect } from "react";
-import { ReactComponent as SearchIcon } from '../assets/searchIcon.svg';
-
-const albums = [
-  {
-    id: 1,
-    title: "minisode 1: Blue Hour",
-    image: "https://upload.wikimedia.org/wikipedia/en/e/e0/Minisode1_-_Blue_Hour.jpg",
-    type: "album"
-  },
-  {
-    id: 2,
-    title: "minisode 2: Thursday’s Child",
-    image: "https://i.scdn.co/image/ab67616d0000b27313ac5d67675999ba7b9c4f21",
-    type: "album"
-  },
-  {
-    id: 3,
-    title: "minisode 3: Tomorrow",
-    image: "https://i.scdn.co/image/ab67616d0000b27303c996028737858321d2ffe0",
-    type: "album"
-  },
-  {
-    id: 4,
-    title: "Tomorrow X Together",
-    image: "https://blog.quizur.com/wp-content/uploads/2024/11/txt-with-spray-paint-mgwwwlfbbad8085b.webp",
-    type: "artist"
-  },
-];
+import { useNavigate } from "react-router-dom";
+import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
 
 const SearchBar = () => {
   const [query, setQuery] = useState("");
-  const [filteredAlbums, setFilteredAlbums] = useState([]);
-  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const [searchedData, setSearchedData] = useState([]);
+  const [outsideClicked, setOutsideClicked] = useState(false);
   const searchBarRef = useRef(null);
+  const navigate = useNavigate();
 
-  const handleSearch = (e) => {
-    const searchQuery = e.target.value.toLowerCase();
-    setQuery(searchQuery);
-
-    if (searchQuery.trim() === "") {
-      setFilteredAlbums([]);
-      setIsDropdownVisible(false);
-    } else {
-      setFilteredAlbums(
-        albums.filter((album) =>
-          album.title.toLowerCase().includes(searchQuery)
-        )
-      );
+  const searchDB = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/search?search_query=${query}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      setSearchedData(data);
+      return data;
+    } catch (err) {
+      console.error("Error fetching search results:", err.message);
+      setSearchedData([]); // Clear data on error
     }
-    setIsDropdownVisible(true);
   };
 
+  // Debounced Search Function
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (query.length >= 2) {
+        searchDB();
+      } else {
+        setSearchedData([]);
+      }
+    }, 100); // Delay of 300ms to prevent excessive API calls
+
+    setOutsideClicked(true);
+
+    return () => clearTimeout(delayDebounce); // Cleanup timeout
+  }, [query]);
+
+
+
   const handleClickOutside = (event) => {
-    if (
-      searchBarRef.current &&
-      !searchBarRef.current.contains(event.target)
-    ) {
-      setIsDropdownVisible(false);
+    if (searchBarRef.current && !searchBarRef.current.contains(event.target)) {
+      setOutsideClicked(false);
     }
   };
 
@@ -67,42 +54,64 @@ const SearchBar = () => {
     };
   }, []);
 
+  const handleSearchSubmit = async () => {
+    if (query.length >= 2) {
+      if (!searchedData) {
+        const data = await searchDB();
+        setSearchedData(data);
+      }
+      navigate("/search", { state: { data: searchedData, query: query} });
+    }
+    setOutsideClicked(false);
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleSearchSubmit();
+    }
+  };
+
   return (
     <div ref={searchBarRef} className="relative w-full max-w-md mx-auto my-auto">
       {/* Search Input */}
       <div className="flex items-center bg-white rounded-full py-2 px-4 w-full">
-            <input
-              type="text"
-              value={query}
-              onChange={handleSearch}
-              placeholder="Search artists, albums and more..."
-              className="flex-grow bg-transparent focus:outline-none text-gray-700"
-            />
-            <button className="text-gray-500 hover:text-gray-700">
-            <SearchIcon
-              className={`w-5 h-5 transition-transform duration-300 stroke-[#383838] hover:stroke-gray-400`}
-            />
-            </button>
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Search artists, albums and more..."
+          className="flex-grow bg-transparent focus:outline-none text-gray-700"
+        />
+        <button className="text-gray-500 hover:text-gray-700" onClick={handleSearchSubmit}>
+          <SearchIcon className="w-5 h-5 transition-transform duration-300 stroke-[#383838] hover:stroke-gray-400" />
+        </button>
       </div>
 
       {/* Dropdown Results */}
-      {isDropdownVisible && filteredAlbums.length > 0 && (
+      {outsideClicked && query.length >= 2 && (
         <div className="absolute z-50 mt-2 bg-white shadow-lg rounded-md w-full overflow-hidden">
+          {searchedData.length > 0 ? (
           <ul>
-            {filteredAlbums.map((album) => (
+            {searchedData.map((item) => (
               <li
-                key={album.id}
+                key={item.id}
                 className="flex items-center justify-between px-4 py-2 hover:bg-gray-100 cursor-pointer"
               >
-                <span className="text-gray-800">{album.title}</span>
+                <span className="text-gray-800">{item.name}</span>
                 <img
-                  src={album.image}
-                  alt={album.title}
-                  className={`w-10 h-10 object-cover ${album.type === 'artist' ? 'rounded-full' : 'rounded-md'}`}
+                  src={item.image_uri}
+                  alt={item.name}
+                  className={`w-10 h-10 object-cover ${
+                    item.obj_type === "release" ? "rounded-md" : "rounded-full"
+                  }`}
                 />
               </li>
             ))}
           </ul>
+          ) : (
+            <div className="px-4 py-2 text-gray-500 text-center">No results found</div>
+          )}
         </div>
       )}
     </div>
@@ -110,3 +119,4 @@ const SearchBar = () => {
 };
 
 export default SearchBar;
+
