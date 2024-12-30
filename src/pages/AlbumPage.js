@@ -12,26 +12,42 @@ const AlbumPage = () => {
   const [loading, setLoading] = useState(true); // State to track loading status
   const [error, setError] = useState(null); // State to track any errors
   const [photocardSets, setPhotocardSets] = useState([]);
-  
+
   const { artist_n_name, release_id } = useParams();
 
   const baseUri = process.env.REACT_APP_API_BASE_URI;
 
-  // Handle disabling background scrolling
-  useEffect(() => {
-    if (viewedImage) {
-      // Disable scrolling
-      document.body.style.overflow = "hidden";
-    } else {
-      // Re-enable scrolling
-      document.body.style.overflow = "";
-    }
+  const imageRef = useRef(null);
+  const [styles, setStyles] = useState({ transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg)' });
+  const [isDragging, setIsDragging] = useState(false);
 
-    // Cleanup on unmount
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [viewedImage]);
+  const handleMouseDown = () => {
+    setIsDragging(true);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    setStyles({ transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg)' });
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+
+    const image = imageRef.current;
+    if (!image) return;
+
+    const { left, top, width, height } = image.getBoundingClientRect();
+    const x = e.clientX - (left + width / 2);
+    const y = e.clientY - (top + height / 2);
+
+    const rotateX = -y / height * 15; // Adjust multiplier for sensitivity
+    const rotateY = x / width * 15; // Adjust multiplier for sensitivity
+
+    setStyles({
+      transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
+    });
+  };
+
   
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -258,14 +274,38 @@ const AlbumPage = () => {
         <div
           className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
           onClick={() => setViewedImage(null)} // Close modal on background click
+          onMouseMove={handleMouseMove}
+onMouseDown={handleMouseDown}
+onMouseUp={handleMouseUp}
+onMouseLeave={handleMouseUp} // Resets on leave
         >
           <img
+            ref={imageRef}
             src={viewedImage}
             alt="Photocard"
             className="max-w-[80%] max-h-[80%] rounded-2xl"
             onClick={(e) => e.stopPropagation()} // Prevent closing when clicking on the image
+            style={styles}
+            draggable="false"       
           />
         </div>
+
+/* <div
+className="flex items-center justify-center h-96 w-96 mx-auto"
+onMouseMove={handleMouseMove}
+onMouseDown={handleMouseDown}
+onMouseUp={handleMouseUp}
+onMouseLeave={handleMouseUp} // Resets on leave
+>
+<img
+  ref={imageRef}
+  className="rounded-lg shadow-lg transition-transform duration-100 ease-out"
+  src={viewedImage}
+  alt="Tilt Effect"
+  style={styles}
+/>
+</div> */
+
       )}
 
     </>
