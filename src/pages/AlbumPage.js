@@ -20,8 +20,10 @@ const AlbumPage = () => {
   const imageRef = useRef(null);
   const [styles, setStyles] = useState({ transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg)' });
   const [isDragging, setIsDragging] = useState(false);
+  const [touchStart, setTouchStart] = useState(null);
 
-  const handleMouseDown = () => {
+  const handleMouseDown = (e) => {
+    e.preventDefault(); // Prevents default drag behavior
     setIsDragging(true);
   };
 
@@ -39,6 +41,35 @@ const AlbumPage = () => {
     const { left, top, width, height } = image.getBoundingClientRect();
     const x = e.clientX - (left + width / 2);
     const y = e.clientY - (top + height / 2);
+
+    const rotateX = -y / height * 15; // Adjust multiplier for sensitivity
+    const rotateY = x / width * 15; // Adjust multiplier for sensitivity
+
+    setStyles({
+      transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
+    });
+  };
+
+  const handleTouchStart = (e) => {
+    setTouchStart(e.touches[0]);
+    setIsDragging(true);
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    setTouchStart(null);
+    setStyles({ transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg)' });
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isDragging || !touchStart) return;
+
+    const image = imageRef.current;
+    if (!image) return;
+
+    const { left, top, width, height } = image.getBoundingClientRect();
+    const x = e.touches[0].clientX - (left + width / 2);
+    const y = e.touches[0].clientY - (top + height / 2);
 
     const rotateX = -y / height * 15; // Adjust multiplier for sensitivity
     const rotateY = x / width * 15; // Adjust multiplier for sensitivity
@@ -275,9 +306,12 @@ const AlbumPage = () => {
           className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
           onClick={() => setViewedImage(null)} // Close modal on background click
           onMouseMove={handleMouseMove}
-onMouseDown={handleMouseDown}
-onMouseUp={handleMouseUp}
-onMouseLeave={handleMouseUp} // Resets on leave
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp} // Resets on leave
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          onTouchMove={handleTouchMove}
         >
           <img
             ref={imageRef}
