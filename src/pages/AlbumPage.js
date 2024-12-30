@@ -57,18 +57,18 @@ const AlbumPage = () => {
     });
   };
 
-  // Disable scroll when modal is open
-  useEffect(() => {
-    if (viewedImage) {
-      document.body.classList.add("overflow-hidden"); // Tailwind class
-    } else {
-      document.body.classList.remove("overflow-hidden");
-    }
+// Disable scroll when modal is open
+useEffect(() => {
+  if (viewedImage) {
+    document.body.style.overflow = "hidden"; // Synchronously disable scroll
+  } else {
+    document.body.style.overflow = ""; // Restore scroll
+  }
 
-    return () => {
-      document.body.classList.remove("overflow-hidden");
-    };
-  }, [viewedImage]);
+  return () => {
+    document.body.style.overflow = ""; // Cleanup
+  };
+}, [viewedImage]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
