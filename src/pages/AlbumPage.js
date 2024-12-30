@@ -42,8 +42,8 @@ const AlbumPage = () => {
     const x = e.clientX - (left + width / 2);
     const y = e.clientY - (top + height / 2);
 
-    const rotateX = -y / height * 15; // Adjust multiplier for sensitivity
-    const rotateY = x / width * 15; // Adjust multiplier for sensitivity
+    const rotateX = -y / height * 35; // Adjust multiplier for sensitivity
+    const rotateY = x / width * 35; // Adjust multiplier for sensitivity
 
     setStyles({
       transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
