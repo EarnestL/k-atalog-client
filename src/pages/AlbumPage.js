@@ -12,6 +12,7 @@ const AlbumPage = () => {
   const [loading, setLoading] = useState(true); // State to track loading status
   const [error, setError] = useState(null); // State to track any errors
   const [photocardSets, setPhotocardSets] = useState([]);
+  const [releaseDetails, setReleaseDetails] = useState({});
 
   const { artist_n_name, release_id } = useParams();
 
@@ -114,8 +115,9 @@ useEffect(() => {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
           const data = await response.json();
-          if (data && data.length > 0) {
-            setPhotocardSets(data); // Update state with fetched data
+          if (data) {
+            setPhotocardSets(data['photocard_sets']); // Update state with fetched data
+            setReleaseDetails(data);
           } else {
             console.warn("No data returned from API");
           }
@@ -128,7 +130,6 @@ useEffect(() => {
   
       fetchPhotocards();
     }, []); // Empty dependency array ensures this runs only once
-
 
   // Initialize layouts when photocardSets is set
   useEffect(() => {
@@ -179,7 +180,7 @@ useEffect(() => {
       >
         <div className="max-w-4xl mx-auto p-4 flex items-center">
           <img
-            src={photocardSets.length>0 ? photocardSets[0]['release_img'] : ''}
+            src={releaseDetails['release_img']}
             alt="Album Cover"
             className="w-12 h-12 mr-4 rounded-md"
           />
@@ -196,15 +197,21 @@ useEffect(() => {
         className="max-w-4xl mx-auto p-4 flex items-center justify-center md:justify-normal"
       >
         <img
-          src={photocardSets.length>0 ? photocardSets[0]['release_img'] : ''}
-          alt="Album Cover"
-          className="w-24 h-24 md:w-40 md:h-40 mr-4 md:mr-6 rounded-md"
+          src={releaseDetails['release_img']}
+          className={`bg-gray-300 w-24 h-24 md:w-40 md:h-40 mr-4 md:mr-6 rounded-md ${loading ? 'animate-pulse': ''}`}
         />
+        {!loading ?
         <div>
-          <h1 className="text-lg md:text-2xl font-bold text-gray-800">{photocardSets.length>0 ? photocardSets[0]['release_title'] : '-'}</h1>
-          <h2 className="text-lg md:text-2xl text-gray-600">{photocardSets.length>0 ? photocardSets[0]['group_name'] : '-'}</h2>
-          <p className="text-xs md:text-sm text-gray-500">{photocardSets.length>0 ? photocardSets[0]['release_date'] : '-'}</p>
+          <h1 className="text-lg md:text-2xl font-bold text-gray-800">{releaseDetails['release_title']}</h1>
+          <h2 className="text-lg md:text-2xl text-gray-600">{releaseDetails['group_name']}</h2>
+          <p className="text-xs md:text-sm text-gray-500">{releaseDetails['release_date']}</p>
+        </div> :
+        <div>
+          <div className="bg-gray-300 w-48 h-5 md:h-7 rounded-md mb-2 animate-pulse"></div>
+          <div className="bg-gray-300 w-48 h-5 md:h-7 rounded-md mb-2 animate-pulse"></div>
+          <div className="bg-gray-300 w-20 h-3 md:h-4 rounded-md animate-pulse"></div>
         </div>
+        }
       </div>
     </div>
           
@@ -248,47 +255,70 @@ useEffect(() => {
 
 
       <div>
-  {photocardSets.map((set, index) => (
-    <div key={index} className="max-w-4xl mx-auto px-8 py-4 bg-[#faf9f9] text-gray-800 rounded-lg mb-2">
-
-      <h2 className="text-sm font-semibold text-white bg-gray-600 inline-block mb-2 px-3 py-1 rounded-2xl mr-10">
-        {set.title}
-      </h2>
-
-      <div
-        className={`grid gap-4 ${
-          layouts[index]
-            ? "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
-            : "grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3"
-        }`}
-      >
-        {layouts.length>0 && set.photocards?.map((card) => (
+  {loading ? (
+    <div className="max-w-4xl mx-auto px-8 py-4 bg-[#faf9f9] text-gray-800 rounded-lg mb-2">
+      {/* Skeleton Title */}
+      <div className="h-6 w-32 bg-gray-300 rounded-md mb-4 animate-pulse"></div>
+      
+      <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        {/* Skeleton Cards */}
+        {Array.from({ length: 5 }).map((_, index) => (
           <div
-            key={card.pc_id}
-            className={`relative group ${
-              layouts[index] ? "aspect-w-5 aspect-h-8" : "aspect-w-8 aspect-h-5"
-            } rounded-3xl`}
-            onClick={() => setViewedImage(card.pc_img)}
-          >
-            {/* Image */}
-            <img
-              src={card.pc_img}
-              alt={card.idol_name}
-              className="w-full h-full rounded-3xl object-cover transition-transform duration-300 group-hover:scale-105"
-            />
-
-            {/* Gradient Overlay */}
-            <div className="absolute rounded-3xl inset-0 bg-gradient-to-t from-black via-transparent opacity-0 group-hover:opacity-100 transition-transform group-hover:scale-105 duration-300"></div>
-
-            {/* Information Overlay */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <h3 className="text-sm font-bold">{card.idol_name}</h3>
-            </div>
-          </div>
+            key={index}
+            className="relative rounded-3xl bg-gray-300 w-full h-48 sm:h-60 md:h-72 animate-pulse"
+          ></div>
         ))}
       </div>
     </div>
-  ))}
+  ) : photocardSets.length==0 ? (
+    <div className="max-w-4xl mx-auto px-8 py-4 bg-[#faf9f9] text-gray-800 rounded-lg mb-2">
+      <div className="w-full h-48 sm:h-60 md:h-72 rounded-3xl flex justify-center items-center">
+        <p className="text-lg font-semibold text-gray-300">No Photocards Available</p>
+      </div>
+  </div>
+  ) : (
+    photocardSets.map((set, index) => (
+      <div key={index} className="max-w-4xl mx-auto px-8 py-4 bg-[#faf9f9] text-gray-800 rounded-lg mb-2">
+  
+        <h2 className="text-sm font-semibold text-white bg-gray-600 inline-block mb-2 px-3 py-1 rounded-2xl mr-10">
+          {set.title}
+        </h2>
+  
+        <div
+          className={`grid gap-4 ${
+            layouts[index]
+              ? "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
+              : "grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3"
+          }`}
+        >
+          {layouts.length>0 && set.photocards?.map((card) => (
+            <div
+              key={card.pc_id}
+              className={`relative group ${
+                layouts[index] ? "aspect-w-5 aspect-h-8" : "aspect-w-8 aspect-h-5"
+              } rounded-3xl`}
+              onClick={() => setViewedImage(card.pc_img)}
+            >
+              {/* Image */}
+              <img
+                src={card.pc_img}
+                alt={card.idol_name}
+                className="w-full h-full rounded-3xl object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+  
+              {/* Gradient Overlay */}
+              <div className="absolute rounded-3xl inset-0 bg-gradient-to-t from-black via-transparent opacity-0 group-hover:opacity-100 transition-transform group-hover:scale-105 duration-300"></div>
+  
+              {/* Information Overlay */}
+              <div className="absolute bottom-0 left-0 right-0 p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <h3 className="text-sm font-bold">{card.idol_name}</h3>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    ))
+  )}
 </div>
       {/* Fullscreen Modal */}
       {viewedImage && (
