@@ -9,9 +9,11 @@ const SearchBar = () => {
   const searchBarRef = useRef(null);
   const navigate = useNavigate();
 
+  const baseUri = process.env.REACT_APP_API_BASE_URI;
+
   const searchDB = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/search?search_query=${query}`);
+      const response = await fetch(`${baseUri}/search?search_query=${query}`);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }

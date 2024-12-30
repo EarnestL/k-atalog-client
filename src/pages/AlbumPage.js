@@ -15,6 +15,7 @@ const AlbumPage = () => {
   
   const { artist_n_name, release_id } = useParams();
 
+  const baseUri = process.env.REACT_APP_API_BASE_URI;
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -54,7 +55,7 @@ const AlbumPage = () => {
     useEffect(() => {
       const fetchPhotocards = async () => {
         try {
-          const response = await fetch(`http://localhost:8000/photocards/release/${release_id}`); // Replace with your API URL
+          const response = await fetch(`${baseUri}/photocards/release/${release_id}`); // Replace with your API URL
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }

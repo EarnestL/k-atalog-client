@@ -13,12 +13,14 @@ import { useParams } from "react-router-dom";
     const { group_n_name } = useParams();
     const id = location.state?.id || null;
 
+    const baseUri = process.env.REACT_APP_API_BASE_URI;
+
     const [isSticky, setIsSticky] = useState(false);
     useEffect(() => {
 
       const fetchAlbums = async () => {
         try {
-          const response = await fetch(`http://localhost:8000/album/releases?${id!==null?`group_id=${id}`:''}&group_n_name=${group_n_name}`);
+          const response = await fetch(`${baseUri}/album/releases?${id!==null?`group_id=${id}`:''}&group_n_name=${group_n_name}`);
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }

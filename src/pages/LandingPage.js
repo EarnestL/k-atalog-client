@@ -6,12 +6,13 @@ const LandingPage = () => {
   const [albums, setAlbums] = useState([]); // State to hold the albums data
   const [loading, setLoading] = useState(true); // State to track loading status
   const [error, setError] = useState(null); // State to track any errors
+  const baseUri = process.env.REACT_APP_API_BASE_URI;
 
   // Fetch albums data from API
   useEffect(() => {
     const fetchAlbums = async () => {
       try {
-        const response = await fetch("http://localhost:8000/album/releases"); // Replace with your API URL
+        const response = await fetch(`${baseUri}/album/releases`); // Replace with your API URL
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
