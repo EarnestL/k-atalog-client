@@ -79,7 +79,19 @@ const AlbumPage = () => {
     });
   };
 
-  
+  // Disable scroll when modal is open
+  useEffect(() => {
+    if (viewedImage) {
+      document.body.classList.add("overflow-hidden"); // Tailwind class
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [viewedImage]);
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
