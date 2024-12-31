@@ -7,6 +7,7 @@ import SearchPage from './pages/SearchPage';
 import AlbumPage from './pages/AlbumPage';
 import ArtistPage from './pages/ArtistPage';
 
+
 function App() {
   return (
     <Router>

@@ -13,6 +13,7 @@ const AlbumPage = () => {
   const [error, setError] = useState(null); // State to track any errors
   const [photocardSets, setPhotocardSets] = useState([]);
   const [releaseDetails, setReleaseDetails] = useState({});
+  const [pobPhotocards, setPobPhotocards] = useState([]);
 
   const { artist_n_name, release_id } = useParams();
 
@@ -22,6 +23,26 @@ const AlbumPage = () => {
   const [styles, setStyles] = useState({ transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg)' });
   const [isDragging, setIsDragging] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
+
+  const sourceColorMap = {};
+  const sourceColorMapTxt = {};
+
+  const bgColors = ['bg-red-400', 'bg-blue-400', 'bg-amber-400', 'bg-teal-400', 'bg-purple-400', 'bg-orange-400'];
+  const txtColors = ['text-red-400', 'text-blue-400', 'text-amber-400', 'text-teal-400', 'text-purple-400', 'text-orange-400'];
+
+  const getColorForSource = (source) => {
+    // If the source already has an assigned color, use it
+    if (sourceColorMap[source] && sourceColorMapTxt[source]) {
+      return [sourceColorMap[source], sourceColorMapTxt[source]];
+    }
+    // Assign a new color from the list
+    const newColor = bgColors[Object.keys(sourceColorMap).length % bgColors.length];
+    const newColorTxt = txtColors[Object.keys(sourceColorMapTxt).length % txtColors.length];
+    
+    sourceColorMap[source] = newColor;
+    sourceColorMapTxt[source] = newColorTxt;
+    return [newColor, newColorTxt];
+  };
 
   const handleClick = () => {
     if (!isDragging) {
@@ -117,6 +138,7 @@ useEffect(() => {
           const data = await response.json();
           if (data) {
             setPhotocardSets(data['photocard_sets']); // Update state with fetched data
+            setPobPhotocards(data['special_photocard_sets']);
             setReleaseDetails(data);
           } else {
             console.warn("No data returned from API");
@@ -277,7 +299,8 @@ useEffect(() => {
       </div>
   </div>
   ) : (
-    photocardSets.map((set, index) => (
+    <>
+    {photocardSets.map((set, index) => (
       <div key={index} className="max-w-4xl mx-auto px-8 py-4 bg-[#faf9f9] text-gray-800 rounded-lg mb-2">
   
         <h2 className="text-sm font-semibold text-white bg-gray-600 inline-block mb-2 px-3 py-1 rounded-2xl mr-10">
@@ -317,7 +340,58 @@ useEffect(() => {
           ))}
         </div>
       </div>
-    ))
+    ))}
+
+    {/* pob section */}
+    <div className="max-w-4xl mx-auto px-8 py-4 bg-[#faf9f9] text-gray-800 rounded-lg mb-2">
+
+
+<h2 className="text-sm font-semibold text-white shadow-lg inline-block mb-4 px-3 py-1 rounded-2xl mr-10 bg-[linear-gradient(to_top_left,_#C9AE5D,_#C9AE5D,_#C9AE5D,_#FFFFFF,_#C9AE5D,_#C9AE5D,_#C9AE5D)] bg-[length:300%_300%] animate-shimmer">
+          POBs
+        </h2>
+  <div
+    className={`grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5`}
+  >
+    {layouts.length>0 && pobPhotocards?.map((card, index) => {
+              const FirstSource = index==0 || pobPhotocards[index].source_description != pobPhotocards[index-1].source_description;
+              const [bgColor, txtColor] = getColorForSource(card.source_description);
+      return (<div
+        key={card.pc_id}
+        className={`relative group aspect-w-5 aspect-h-8 rounded-3xl`}
+        onClick={() => setViewedImage(card.pc_img)}
+      >
+        {FirstSource && (
+        <div className="flex justify-between w-full h-1 mb-4 rounded-full">
+          <div className={`w-full ${bgColor} rounded-full mr-2`}/>
+          <h1 className={`text-sm -mt-2 font-semibold ${txtColor}`}>{card.source_description}</h1>
+          <div className={`w-full ${bgColor} rounded-full ml-2`}/>
+        </div>)}
+
+        {!FirstSource && (<div className={`w-full ${bgColor} h-1 mb-4 rounded-full`}></div>)}
+        
+        <div>
+
+        {/* Image */}
+        <img
+          src={card.pc_img}
+          alt={card.idol_name}
+          className="w-full h-full rounded-3xl object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+
+        {/* Gradient Overlay */}
+        <div className="absolute rounded-3xl inset-0 bg-gradient-to-t from-black via-transparent opacity-0 group-hover:opacity-100 transition-transform group-hover:scale-105 duration-300"></div>
+
+        {/* Information Overlay */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <h3 className="text-sm font-bold">{card.idol_name}</h3>
+        </div>
+        </div>
+      </div>);
+})}
+  </div>
+</div>
+
+    </>
   )}
 </div>
       {/* Fullscreen Modal */}
@@ -339,22 +413,6 @@ useEffect(() => {
             draggable="false"       
           />
         </div>
-
-/* <div
-className="flex items-center justify-center h-96 w-96 mx-auto"
-onMouseMove={handleMouseMove}
-onMouseDown={handleMouseDown}
-onMouseUp={handleMouseUp}
-onMouseLeave={handleMouseUp} // Resets on leave
->
-<img
-  ref={imageRef}
-  className="rounded-lg shadow-lg transition-transform duration-100 ease-out"
-  src={viewedImage}
-  alt="Tilt Effect"
-  style={styles}
-/>
-</div> */
 
       )}
 

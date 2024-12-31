@@ -4,7 +4,17 @@ module.exports = {
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      animation: {
+        shimmer: 'shimmer 3s ease-in-out infinite',
+      },
+      keyframes: {
+        shimmer: {
+          '0%': { backgroundPosition: '0% 0%', backgroundColor: 'transparent' },
+          '100%': { backgroundPosition: '100% 100%', backgroundColor: 'transparent' }, // Shimmer movement
+        },
+      },
+    },
   },
   plugins: [
     // Custom scrollbar hiding
