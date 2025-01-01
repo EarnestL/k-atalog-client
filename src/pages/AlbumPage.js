@@ -3,6 +3,7 @@ import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headless
 import { CheckIcon, ChevronDownIcon } from '@heroicons/react/20/solid'
 import clsx from 'clsx'
 import { useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const AlbumPage = () => {
   const [layouts, setLayouts] = useState([]);
@@ -43,6 +44,12 @@ const AlbumPage = () => {
     sourceColorMapTxt[source] = newColorTxt;
     return [newColor, newColorTxt];
   };
+
+  const navigate = useNavigate();
+
+  const handleArtistClick = (id, n_name) => {
+    navigate(`/${n_name}`, { state: { id: id} });
+  }
 
   const handleClick = () => {
     if (!isDragging) {
@@ -137,7 +144,6 @@ useEffect(() => {
           }
           const data = await response.json();
           if (data) {
-            console.log(data);
             setPhotocardSets(data['photocard_sets']); // Update state with fetched data
             setPobPhotocards(data['special_photocard_sets']);
             setReleaseDetails(data);
@@ -209,7 +215,7 @@ useEffect(() => {
           />
           <div>
             <h1 className="text-lg font-bold text-gray-800">{releaseDetails['release_title']}</h1>
-            <h2 className="text-sm text-gray-600">{releaseDetails['artist_name']}</h2>
+            <button className="text-sm text-gray-600 hover:text-gray-400 hover:underline" onClick={()=>handleArtistClick(null, artist_n_name)}>{releaseDetails['artist_name']}</button>
           </div>
         </div>
       </div>
@@ -226,7 +232,7 @@ useEffect(() => {
         {!loading ?
         <div>
           <h1 className="text-lg md:text-2xl font-bold text-gray-800">{releaseDetails['release_title']}</h1>
-          <h2 className="text-lg md:text-2xl text-gray-600">{releaseDetails['artist_name']}</h2>
+          <button className="text-lg md:text-2xl text-gray-600 hover:text-gray-400" onClick={()=>handleArtistClick(null, artist_n_name)}>{releaseDetails['artist_name']}</button>
           <p className="text-xs md:text-sm text-gray-500">{releaseDetails['release_date']}</p>
         </div> :
         <div>
