@@ -137,6 +137,7 @@ useEffect(() => {
           }
           const data = await response.json();
           if (data) {
+            console.log(data);
             setPhotocardSets(data['photocard_sets']); // Update state with fetched data
             setPobPhotocards(data['special_photocard_sets']);
             setReleaseDetails(data);
@@ -151,7 +152,7 @@ useEffect(() => {
       };
   
       fetchPhotocards();
-    }, []); // Empty dependency array ensures this runs only once
+    }, [release_id]); // Empty dependency array ensures this runs only once
 
   // Initialize layouts when photocardSets is set
   useEffect(() => {
@@ -207,8 +208,8 @@ useEffect(() => {
             className="w-12 h-12 mr-4 rounded-md"
           />
           <div>
-            <h1 className="text-lg font-bold text-gray-800">minisode 1: Blue Hour</h1>
-            <h2 className="text-sm text-gray-600">Tomorrow X Together</h2>
+            <h1 className="text-lg font-bold text-gray-800">{releaseDetails['release_title']}</h1>
+            <h2 className="text-sm text-gray-600">{releaseDetails['artist_name']}</h2>
           </div>
         </div>
       </div>
@@ -225,7 +226,7 @@ useEffect(() => {
         {!loading ?
         <div>
           <h1 className="text-lg md:text-2xl font-bold text-gray-800">{releaseDetails['release_title']}</h1>
-          <h2 className="text-lg md:text-2xl text-gray-600">{releaseDetails['group_name']}</h2>
+          <h2 className="text-lg md:text-2xl text-gray-600">{releaseDetails['artist_name']}</h2>
           <p className="text-xs md:text-sm text-gray-500">{releaseDetails['release_date']}</p>
         </div> :
         <div>
@@ -343,7 +344,7 @@ useEffect(() => {
     ))}
 
     {/* pob section */}
-    <div className="max-w-4xl mx-auto px-8 py-4 bg-[#faf9f9] text-gray-800 rounded-lg mb-2">
+    {pobPhotocards.length>0 && (<div className="max-w-4xl mx-auto px-8 py-4 bg-[#faf9f9] text-gray-800 rounded-lg mb-2">
 
 
 <h2 className="text-sm font-semibold text-white shadow-lg inline-block mb-4 px-3 py-1 rounded-2xl mr-10 bg-[linear-gradient(to_top_left,_#C9AE5D,_#C9AE5D,_#C9AE5D,_#FFFFFF,_#C9AE5D,_#C9AE5D,_#C9AE5D)] bg-[length:300%_300%] animate-shimmer">
@@ -352,14 +353,15 @@ useEffect(() => {
   <div
     className={`grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5`}
   >
-    {layouts.length>0 && pobPhotocards?.map((card, index) => {
+    {pobPhotocards?.map((card, index) => {
               const FirstSource = index==0 || pobPhotocards[index].source_description != pobPhotocards[index-1].source_description;
               const [bgColor, txtColor] = getColorForSource(card.source_description);
       return (<div
         key={card.pc_id}
-        className={`relative group aspect-w-5 aspect-h-8 rounded-3xl`}
+        className={`relative aspect-w-5 aspect-h-8 w-full mb-6 group rounded-3xl`}
         onClick={() => setViewedImage(card.pc_img)}
       >
+
         {FirstSource && (
         <div className="flex justify-between w-full h-1 mb-4 rounded-full">
           <div className={`w-full ${bgColor} rounded-full mr-2`}/>
@@ -369,7 +371,7 @@ useEffect(() => {
 
         {!FirstSource && (<div className={`w-full ${bgColor} h-1 mb-4 rounded-full`}></div>)}
         
-        <div>
+
 
         {/* Image */}
         <img
@@ -379,17 +381,16 @@ useEffect(() => {
         />
 
         {/* Gradient Overlay */}
-        <div className="absolute rounded-3xl inset-0 bg-gradient-to-t from-black via-transparent opacity-0 group-hover:opacity-100 transition-transform group-hover:scale-105 duration-300"></div>
+        <div className="absolute -mb-5 rounded-3xl inset-0 bg-gradient-to-t from-black via-transparent opacity-0 group-hover:opacity-100 transition-transform group-hover:scale-105 duration-300"></div>
 
         {/* Information Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <h3 className="text-sm font-bold">{card.idol_name}</h3>
-        </div>
+        <div className="absolute -bottom-5 left-0 right-0 p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <h3 className="text-sm font-bold">{card.group_photo ? releaseDetails.artist_name : card.idol_name}</h3>
         </div>
       </div>);
 })}
   </div>
-</div>
+</div>)}
 
     </>
   )}

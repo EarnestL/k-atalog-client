@@ -48,7 +48,7 @@ import { useParams } from "react-router-dom";
       };
 
       
-    }, []);
+    }, [group_n_name]);
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;

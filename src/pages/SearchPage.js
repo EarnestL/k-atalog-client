@@ -8,14 +8,13 @@ const SearchPage = () => {
   const navigate = useNavigate();
 
   const handleGroupClick = (id, n_name) => {
-    console.log(id);
     navigate(`/${n_name}`, { state: { id: id} });
   };
   const handleIdolClick = () => {
     console.log("idol clicked");
   };
-  const handleReleaseClick = () => {
-    console.log("release clicked");
+  const handleReleaseClick = (item) => {
+    navigate(`/${item.n_name}/${item.id}`);
   };
 
   return (
@@ -54,7 +53,7 @@ const SearchPage = () => {
           ) : item.obj_type === "release" ? (
             <div
               key={index}
-              onClick={handleReleaseClick}
+              onClick={()=>handleReleaseClick(item)}
               className="md:w-[260px] w-[160px] rounded-lg bg-black bg-opacity-0 transition-all duration-100 ease-in hover:bg-opacity-10 flex flex-col items-center justify-between"
             >
               <div className="md:w-[220px] w-[120px] flex-shrink-0 my-4 group">

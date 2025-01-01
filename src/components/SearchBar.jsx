@@ -9,6 +9,14 @@ const SearchBar = () => {
   const searchBarRef = useRef(null);
   const navigate = useNavigate();
 
+  const handleClick = (item) => {
+    if (item.obj_type == 'release'){
+      navigate(`/${item.n_name}/${item.id}`);
+    }
+    else if (item.obj_type == 'group'){
+      navigate(`/${item.n_name}`, { state: { id: item.id} });
+    }
+  };
   const baseUri = process.env.REACT_APP_API_BASE_URI;
 
   const searchDB = async () => {
@@ -99,6 +107,7 @@ const SearchBar = () => {
               <li
                 key={item.id}
                 className="flex items-center justify-between px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                onClick={()=>handleClick(item)}
               >
                 <span className="text-gray-800">{item.name}</span>
                 <img
